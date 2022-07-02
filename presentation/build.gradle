@@ -1,0 +1,87 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        applicationId "com.example.app"
+        minSdkVersion 21
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    def applicationDependencies = rootProject.ext.mainApplication
+    def unitTestDependencies = rootProject.ext.unitTesting
+    def acceptanceTestDependencies = rootProject.ext.acceptanceTesting
+
+    kapt applicationDependencies.daggerCompiler
+    compileOnly applicationDependencies.javaxAnnotation
+    compileOnly applicationDependencies.javaxInject
+
+    implementation project(':domain')
+    implementation project(':data')
+    implementation applicationDependencies.appCompat
+    implementation applicationDependencies.googlemaps
+    implementation applicationDependencies.googlemapsutils
+    implementation applicationDependencies.core
+    implementation applicationDependencies.constraintLayout
+    implementation applicationDependencies.recyclerview
+    implementation applicationDependencies.dagger
+    implementation applicationDependencies.daggerSupport
+    kapt applicationDependencies.daggerProcessor
+    implementation applicationDependencies.parcelerApi
+    implementation applicationDependencies.material
+    annotationProcessor applicationDependencies.parceler
+    implementation applicationDependencies.retrofit
+    implementation applicationDependencies.okhttpLoggingInterceptor
+    implementation applicationDependencies.glide
+    implementation applicationDependencies.room
+    annotationProcessor applicationDependencies.roomProcessor
+    kapt applicationDependencies.roomProcessor
+    annotationProcessor applicationDependencies.glideProcessor
+
+    implementation applicationDependencies.rxJava
+    implementation applicationDependencies.rxAndroid
+    implementation applicationDependencies.rxKotlin
+    testImplementation unitTestDependencies.kotlin
+    testImplementation unitTestDependencies.kotlinTest
+    testImplementation unitTestDependencies.robolectric
+    testImplementation unitTestDependencies.junit
+    testImplementation unitTestDependencies.mockito
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.22.0'
+    testImplementation unitTestDependencies.kluent
+    androidTestImplementation acceptanceTestDependencies.testCore
+    androidTestImplementation acceptanceTestDependencies.testRunner
+    androidTestImplementation acceptanceTestDependencies.testRules
+    androidTestImplementation acceptanceTestDependencies.espressoCore
+    androidTestImplementation acceptanceTestDependencies.espressoContrib
+    androidTestImplementation acceptanceTestDependencies.espressoIdling
+    androidTestImplementation acceptanceTestDependencies.espressoIntents
+}
+repositories {
+    mavenCentral()
+}

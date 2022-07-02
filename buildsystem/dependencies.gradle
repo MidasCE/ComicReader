@@ -1,0 +1,90 @@
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+ext {
+    //Android libraries
+    appCompat_version = '1.1.0'
+    constraintLayout_version = '1.1.3'
+    recyclerview_version = '1.0.0'
+    material_version = '1.0.0'
+    androidXCore = "1.6.0"
+    room_version = "2.3.0"
+
+    //Third party libraries
+    dagger_version = '2.24'
+    javaxAnnotations_version = '1.0'
+    javaxInject_version = '1'
+    retrofit_version = '2.3.0'
+    okhttp_logging_interceptor_version = '3.8.1'
+    rx_android_version = '2.1.0'
+    rx_java_version = '2.4.0'
+    rx_kotlin_version = '2.3.0'
+    parceler_version = '1.1.12'
+    gmap_version = '17.0.0'
+    gson_version = '2.8.6'
+    gmap_utils_version = '1.2.1'
+
+    //Unit Testing
+    robolectric_version = '3.8'
+    junit_version = '4.12'
+    mockito_version = '1.4.0'
+    kluent_version = '1.14'
+
+    //Acceptance Testing
+    runner_version = '1.0.0'
+    espresso_version = '3.2.0'
+
+    glide_version = '4.11.0'
+
+    mainApplication = [
+            parcelerApi             : "org.parceler:parceler-api:$parceler_version",
+            parceler                : "org.parceler:parceler:$parceler_version",
+            kotlin                  : "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version",
+            appCompat               : "androidx.appcompat:appcompat:$appCompat_version",
+            core                    : "androidx.core:core-ktx:$androidXCore",
+            constraintLayout        : "androidx.constraintlayout:constraintlayout:$constraintLayout_version",
+            recyclerview            : "androidx.recyclerview:recyclerview:$recyclerview_version",
+            daggerCompiler          : "com.google.dagger:dagger-compiler:$dagger_version",
+            dagger                  : "com.google.dagger:dagger:$dagger_version",
+            daggerSupport           : "com.google.dagger:dagger-android-support:$dagger_version",
+            daggerProcessor         : "com.google.dagger:dagger-android-processor:$dagger_version",
+            javaxAnnotation         : "javax.annotation:jsr250-api:$javaxAnnotations_version",
+            javaxInject             : "javax.inject:javax.inject:$javaxInject_version",
+            retrofit                : "com.squareup.retrofit2:converter-gson:$retrofit_version",
+            rxJava                  : "com.squareup.retrofit2:adapter-rxjava2:$rx_java_version",
+            rxAndroid               : "io.reactivex.rxjava2:rxandroid:$rx_android_version",
+            rxKotlin                : "io.reactivex.rxjava2:rxkotlin:$rx_kotlin_version",
+            okhttpLoggingInterceptor: "com.squareup.okhttp3:logging-interceptor:$okhttp_logging_interceptor_version",
+            material                : "com.google.android.material:material:$material_version",
+            googlemaps              : "com.google.android.gms:play-services-maps:$gmap_version",
+            googlemapsutils         : "com.google.maps.android:android-maps-utils:$gmap_utils_version",
+            gson                    : "com.google.code.gson:gson:$gson_version",
+            glide                   : "com.github.bumptech.glide:glide:$glide_version",
+            glideProcessor          : "com.github.bumptech.glide:compiler:$glide_version",
+            room                    : "androidx.room:room-runtime:$room_version",
+            roomProcessor           : "androidx.room:room-compiler:$room_version"
+    ]
+
+    unitTesting = [
+            kotlin     : "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version",
+            kotlinTest : "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version",
+            robolectric: "org.robolectric:robolectric:$robolectric_version",
+            junit      : "junit:junit:$junit_version",
+            mockito    : "com.nhaarman:mockito-kotlin:$mockito_version",
+            kluent     : "org.amshove.kluent:kluent:$kluent_version",
+    ]
+
+    acceptanceTesting = [
+            testCore          : "androidx.test:core:$runner_version",
+            testRunner        : "androidx.test:runner:$runner_version",
+            testRules         : "androidx.test:rules:$runner_version",
+            espressoCore      : "androidx.test.espresso:espresso-core:$espresso_version",
+            espressoContrib   : "androidx.test.espresso:espresso-contrib:$espresso_version",
+            espressoIntents   : "androidx.test.espresso:espresso-intents:$espresso_version",
+            espressoIdling    : "androidx.test.espresso:espresso-idling-resource:$espresso_version"
+    ]
+}
