@@ -3,4 +3,6 @@
     <string name="description">Description: %s</string>
     <string name="date">Date: %s</string>
     <string name="price">Price: %s</string>
+    <string name="explanationButton">Don\'t get it?, tap here!</string>
+    <string name="searchComicHint">Search comic number here!</string>
 </resources>
