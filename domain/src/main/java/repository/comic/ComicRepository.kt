@@ -5,7 +5,7 @@ import model.Comic
 
 interface ComicRepository {
 
-    fun getCurrentComic(): Single<Comic>
+    fun getLatestComic(): Single<Comic>
 
     fun getComic(id: Int): Single<Comic>
 }

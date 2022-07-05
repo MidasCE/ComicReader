@@ -12,5 +12,5 @@ interface ComicAPI {
             : Single<ComicResponse>
 
     @GET("info.0.json")
-    fun getCurrentComic() : Single<ComicResponse>
+    fun getLatestComic() : Single<ComicResponse>
 }

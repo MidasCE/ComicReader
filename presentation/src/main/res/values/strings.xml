@@ -4,5 +4,8 @@
     <string name="date">Date: %s</string>
     <string name="price">Price: %s</string>
     <string name="explanationButton">Don\'t get it?, tap here!</string>
+    <string name="randomButton">Random new one!</string>
     <string name="searchComicHint">Search comic number here!</string>
+    <string name="previousButton">Previous</string>
+    <string name="nextButton">Next</string>
 </resources>

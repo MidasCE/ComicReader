@@ -8,8 +8,8 @@ import repository.comic.ComicRepository
 
 class ComicRepositoryImpl(private val api: ComicAPI) : ComicRepository {
 
-    override fun getCurrentComic(): Single<Comic> {
-        return api.getCurrentComic().map { response ->
+    override fun getLatestComic(): Single<Comic> {
+        return api.getLatestComic().map { response ->
             response.toDomain()
         }
     }

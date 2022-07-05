@@ -7,7 +7,9 @@ import androidx.lifecycle.ViewModel
 import com.example.app.core.Event
 import com.example.app.core.SchedulerFactory
 import com.example.domain.interactor.comic.ComicInteractor
+import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import model.Comic
 
 class ComicScreenViewModel(
@@ -22,16 +24,21 @@ class ComicScreenViewModel(
     val comicTitleLiveData = MutableLiveData<String>()
     val comicDescriptionLiveData = MutableLiveData<String>()
     val errorLiveData = MutableLiveData<String>()
+
+    private var latestComicId: Int = 2641
+    private var mainComicId: Int = -1
     private var compositeDisposable = CompositeDisposable()
 
-    fun getCurrentComic() {
+    fun getLatestComic() {
         loadingLiveData.postValue(true)
-        val disposable = comicInteractor.getCurrentComic()
+        val disposable = comicInteractor.getLatestComic()
             .subscribeOn(schedulerFactory.io())
             .observeOn(schedulerFactory.main())
             .subscribe({ comic ->
                 loadingLiveData.value = false
                 handleComicLoaded(comic)
+                latestComicId = comic.num
+
             }, {
                 loadingLiveData.value = false
                 handleError(it)
@@ -43,29 +50,66 @@ class ComicScreenViewModel(
     fun getComic(textInput: String) {
         textInput.toIntOrNull()?.let { id ->
             loadingLiveData.postValue(true)
-            val disposable = comicInteractor.getComic(id)
-                .subscribeOn(schedulerFactory.io())
-                .observeOn(schedulerFactory.main())
-                .subscribe({ comic ->
-                    loadingLiveData.value = false
-                    handleComicLoaded(comic)
-                }, {
-                    loadingLiveData.value = false
-                    handleError(it)
-                })
+            val disposable = handleComicRequest(comicInteractor.getComic(id))
 
             compositeDisposable.add(disposable)
         }
     }
 
+    fun getNextComic() {
+        var id = if (mainComicId >= latestComicId) {
+            1
+        } else {
+            mainComicId + 1
+        }
+        loadingLiveData.postValue(true)
+        val disposable = handleComicRequest(comicInteractor.getComic(id))
+
+        compositeDisposable.add(disposable)
+    }
+
+    fun getPreviousComic() {
+        var id = if (mainComicId <= 1) {
+            latestComicId
+        } else {
+            mainComicId - 1
+        }
+        loadingLiveData.postValue(true)
+        val disposable = handleComicRequest(comicInteractor.getComic(id))
+
+        compositeDisposable.add(disposable)
+    }
+
+    fun getRandomComic() {
+        loadingLiveData.postValue(true)
+        val disposable = handleComicRequest(comicInteractor.getRandomComic())
+
+        compositeDisposable.add(disposable)
+    }
+
     fun onTapExplanation() {
-        _openDetailsEvent.value = Event("https://www.explainxkcd.com/wiki/index.php/984")
+        _openDetailsEvent.value = Event("https://www.explainxkcd.com/wiki/index.php/" + mainComicId)
+    }
+
+    private fun handleComicRequest(singleStream: Single<Comic>): Disposable
+    {
+        return singleStream
+            .subscribeOn(schedulerFactory.io())
+            .observeOn(schedulerFactory.main())
+            .subscribe({ comic ->
+                loadingLiveData.value = false
+                handleComicLoaded(comic)
+            }, {
+                loadingLiveData.value = false
+                handleError(it)
+            })
     }
 
     private fun handleComicLoaded(comic: Comic) {
         mainComicUrlLiveData.value = comic.img
         comicTitleLiveData.value = comic.title
         comicDescriptionLiveData.value = comic.alt
+        mainComicId = comic.num
     }
 
     private fun handleError(throwable: Throwable) {

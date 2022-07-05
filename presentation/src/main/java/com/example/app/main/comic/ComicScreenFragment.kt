@@ -41,6 +41,9 @@ class ComicScreenFragment : Fragment() {
     private lateinit var titleTextView: TextView
     private lateinit var altTextView: TextView
     private lateinit var explainationButton: Button
+    private lateinit var randomButton: Button
+    private lateinit var nextButton: Button
+    private lateinit var previousButton: Button
 
     private val viewDisposable = CompositeDisposable()
     private val _searchInput = BehaviorSubject.create<String>()
@@ -64,6 +67,10 @@ class ComicScreenFragment : Fragment() {
         titleTextView = view.findViewById(R.id.titleTextView)
         altTextView = view.findViewById(R.id.altTextView)
         explainationButton = view.findViewById(R.id.explanationButton)
+        randomButton = view.findViewById(R.id.randomButton)
+        nextButton = view.findViewById(R.id.nextButton)
+        previousButton = view.findViewById(R.id.previousButton)
+
         return rootView
     }
 
@@ -82,6 +89,18 @@ class ComicScreenFragment : Fragment() {
 
         explainationButton.setOnClickListener {
             viewModel.onTapExplanation()
+        }
+
+        randomButton.setOnClickListener {
+            viewModel.getRandomComic()
+        }
+
+        nextButton.setOnClickListener {
+            viewModel.getNextComic()
+        }
+
+        previousButton.setOnClickListener {
+            viewModel.getPreviousComic()
         }
 
         searchEditText.addTextChangedListener(
@@ -109,7 +128,7 @@ class ComicScreenFragment : Fragment() {
                     viewModel.getComic(input.toString())
                 }
         )
-        viewModel.getCurrentComic()
+        viewModel.getLatestComic()
     }
 
     private val loadingObserver = Observer<Boolean> { visible ->

@@ -7,6 +7,8 @@ interface ComicInteractor {
 
     fun getComic(id: Int) : Single<Comic>
 
-    fun getCurrentComic() : Single<Comic>
+    fun getLatestComic() : Single<Comic>
+
+    fun getRandomComic() : Single<Comic>
 
 }
