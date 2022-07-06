@@ -93,7 +93,7 @@ class ComicInteractorTest {
     }
 
     @Test
-    fun `Test getRandomComic with latest Id more than | should getComic with random id`() {
+    fun `Test getRandomComic | should getComic with random id`() {
         val comic = Comic(
             1,
             "link",
@@ -113,6 +113,98 @@ class ComicInteractorTest {
             .assertValue(comic)
 
         verify(repository, times(1)).getComic(any())
+    }
+
+    @Test
+    fun `Test getPreviousComic with mainComicId less than or equal 1 | should getComic with latestComicId`() {
+        val comic = Comic(
+            1,
+            "link",
+            "year",
+            "news",
+            "safeTitle",
+            "transcript",
+            "alt",
+            "img",
+            "title",
+            "day"
+        )
+
+        whenever(repository.getComic(any())).thenReturn(Single.just(comic))
+
+        interactor.getPreviousComic(1, 3).test()
+            .assertValue(comic)
+
+        verify(repository, times(1)).getComic(3)
+    }
+
+    @Test
+    fun `Test getPreviousComic with mainComicId more than 1 | should getComic with mainComicId - 1`() {
+        val comic = Comic(
+            1,
+            "link",
+            "year",
+            "news",
+            "safeTitle",
+            "transcript",
+            "alt",
+            "img",
+            "title",
+            "day"
+        )
+
+        whenever(repository.getComic(any())).thenReturn(Single.just(comic))
+
+        interactor.getPreviousComic(2, 3).test()
+            .assertValue(comic)
+
+        verify(repository, times(1)).getComic(1)
+    }
+
+    @Test
+    fun `Test getNextComic with mainComicId more than latestComicId | should getComic with 1`() {
+        val comic = Comic(
+            1,
+            "link",
+            "year",
+            "news",
+            "safeTitle",
+            "transcript",
+            "alt",
+            "img",
+            "title",
+            "day"
+        )
+
+        whenever(repository.getComic(any())).thenReturn(Single.just(comic))
+
+        interactor.getNextComic(4, 3).test()
+            .assertValue(comic)
+
+        verify(repository, times(1)).getComic(1)
+    }
+
+    @Test
+    fun `Test getNextComic with mainComicId less than latestComicId | should getComic with mainComicId + 1`() {
+        val comic = Comic(
+            1,
+            "link",
+            "year",
+            "news",
+            "safeTitle",
+            "transcript",
+            "alt",
+            "img",
+            "title",
+            "day"
+        )
+
+        whenever(repository.getComic(any())).thenReturn(Single.just(comic))
+
+        interactor.getNextComic(1, 3).test()
+            .assertValue(comic)
+
+        verify(repository, times(1)).getComic(2)
     }
 
 }

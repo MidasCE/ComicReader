@@ -57,25 +57,15 @@ class ComicScreenViewModel(
     }
 
     fun getNextComic() {
-        var id = if (mainComicId >= latestComicId) {
-            1
-        } else {
-            mainComicId + 1
-        }
         loadingLiveData.postValue(true)
-        val disposable = handleComicRequest(comicInteractor.getComic(id))
+        val disposable = handleComicRequest(comicInteractor.getNextComic(mainComicId, latestComicId))
 
         compositeDisposable.add(disposable)
     }
 
     fun getPreviousComic() {
-        var id = if (mainComicId <= 1) {
-            latestComicId
-        } else {
-            mainComicId - 1
-        }
         loadingLiveData.postValue(true)
-        val disposable = handleComicRequest(comicInteractor.getComic(id))
+        val disposable = handleComicRequest(comicInteractor.getPreviousComic(mainComicId, latestComicId))
 
         compositeDisposable.add(disposable)
     }

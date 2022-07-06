@@ -210,4 +210,84 @@ class ComicScreenViewModelTest {
         val descriptionResult = viewModel.comicDescriptionLiveData.value
         Assert.assertEquals(descriptionResult, "alt")
     }
+
+    @Test
+    fun `Test getNextComic | should call getPreviousComic from interactor`() {
+        val comic = Comic(
+            1,
+            "link",
+            "year",
+            "news",
+            "safeTitle",
+            "transcript",
+            "alt",
+            "img",
+            "title",
+            "day"
+        )
+
+        whenever(comicInteractor.getNextComic(any(), any())).thenReturn(
+            Single.just(
+                comic
+            )
+        )
+
+        viewModel.getNextComic()
+        Assert.assertEquals(viewModel.loadingLiveData.value, true)
+
+        ioScheduler.triggerActions()
+        mainScheduler.triggerActions()
+        Assert.assertEquals(viewModel.loadingLiveData.value, false)
+
+        verify(comicInteractor, times(1)).getNextComic(any(), any())
+
+        val urlResult = viewModel.mainComicUrlLiveData.value
+        Assert.assertEquals(urlResult, "img")
+
+        val titleResult = viewModel.comicTitleLiveData.value
+        Assert.assertEquals(titleResult, "title")
+
+        val descriptionResult = viewModel.comicDescriptionLiveData.value
+        Assert.assertEquals(descriptionResult, "alt")
+    }
+
+    @Test
+    fun `Test getPreviousComic | should call getPreviousComic from interactor`() {
+        val comic = Comic(
+            1,
+            "link",
+            "year",
+            "news",
+            "safeTitle",
+            "transcript",
+            "alt",
+            "img",
+            "title",
+            "day"
+        )
+
+        whenever(comicInteractor.getPreviousComic(any(), any())).thenReturn(
+            Single.just(
+                comic
+            )
+        )
+
+        viewModel.getPreviousComic()
+        Assert.assertEquals(viewModel.loadingLiveData.value, true)
+
+        ioScheduler.triggerActions()
+        mainScheduler.triggerActions()
+        Assert.assertEquals(viewModel.loadingLiveData.value, false)
+
+        verify(comicInteractor, times(1)).getPreviousComic(any(), any())
+
+        val urlResult = viewModel.mainComicUrlLiveData.value
+        Assert.assertEquals(urlResult, "img")
+
+        val titleResult = viewModel.comicTitleLiveData.value
+        Assert.assertEquals(titleResult, "title")
+
+        val descriptionResult = viewModel.comicDescriptionLiveData.value
+        Assert.assertEquals(descriptionResult, "alt")
+    }
 }

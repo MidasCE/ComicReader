@@ -11,6 +11,24 @@ class ComicInteractorImpl(private val comicRepository: ComicRepository) : ComicI
         return comicRepository.getComic(id)
     }
 
+    override fun getNextComic(mainComicId: Int, latestComicId: Int): Single<Comic> {
+        var id = if (mainComicId >= latestComicId) {
+            1
+        } else {
+            mainComicId + 1
+        }
+        return comicRepository.getComic(id)
+    }
+
+    override fun getPreviousComic(mainComicId: Int, latestComicId: Int): Single<Comic> {
+        var id = if (mainComicId <= 1) {
+            latestComicId
+        } else {
+            mainComicId - 1
+        }
+        return comicRepository.getComic(id)
+    }
+
     override fun getLatestComic(): Single<Comic> {
         return comicRepository.getLatestComic()
     }
