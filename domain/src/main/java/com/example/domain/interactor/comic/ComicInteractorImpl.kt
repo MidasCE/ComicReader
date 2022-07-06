@@ -7,6 +7,9 @@ import repository.comic.ComicRepository
 
 class ComicInteractorImpl(private val comicRepository: ComicRepository) : ComicInteractor {
 
+    companion object {
+        val RESERVED_ID: Int = 404
+    }
     override fun getComic(id: Int): Single<Comic> {
         return comicRepository.getComic(id)
     }
@@ -17,6 +20,9 @@ class ComicInteractorImpl(private val comicRepository: ComicRepository) : ComicI
         } else {
             mainComicId + 1
         }
+        if (id == RESERVED_ID) {
+            id++
+        }
         return comicRepository.getComic(id)
     }
 
@@ -25,6 +31,9 @@ class ComicInteractorImpl(private val comicRepository: ComicRepository) : ComicI
             latestComicId
         } else {
             mainComicId - 1
+        }
+        if (id == RESERVED_ID) {
+            id--
         }
         return comicRepository.getComic(id)
     }

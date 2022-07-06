@@ -162,6 +162,29 @@ class ComicInteractorTest {
     }
 
     @Test
+    fun `Test getPreviousComic with mainComicId at 405 | should avoid 404 reserved id`() {
+        val comic = Comic(
+            1,
+            "link",
+            "year",
+            "news",
+            "safeTitle",
+            "transcript",
+            "alt",
+            "img",
+            "title",
+            "day"
+        )
+
+        whenever(repository.getComic(any())).thenReturn(Single.just(comic))
+
+        interactor.getPreviousComic(405, 9999).test()
+            .assertValue(comic)
+
+        verify(repository, times(1)).getComic(403)
+    }
+
+    @Test
     fun `Test getNextComic with mainComicId more than latestComicId | should getComic with 1`() {
         val comic = Comic(
             1,
@@ -205,6 +228,29 @@ class ComicInteractorTest {
             .assertValue(comic)
 
         verify(repository, times(1)).getComic(2)
+    }
+
+    @Test
+    fun `Test getNextComic with mainComicId at 403 | should avoid 404 reserved id`() {
+        val comic = Comic(
+            1,
+            "link",
+            "year",
+            "news",
+            "safeTitle",
+            "transcript",
+            "alt",
+            "img",
+            "title",
+            "day"
+        )
+
+        whenever(repository.getComic(any())).thenReturn(Single.just(comic))
+
+        interactor.getNextComic(403, 9999).test()
+            .assertValue(comic)
+
+        verify(repository, times(1)).getComic(405)
     }
 
 }
