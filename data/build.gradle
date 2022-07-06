@@ -33,6 +33,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation project(path: ':data')
 
     def applicationDependencies = rootProject.ext.mainApplication
     def unitTestDependencies = rootProject.ext.unitTesting
@@ -60,8 +61,8 @@ dependencies {
     testImplementation unitTestDependencies.kotlinTest
     testImplementation unitTestDependencies.junit
     testImplementation unitTestDependencies.mockito
-    testImplementation unitTestDependencies.kluent
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.22.0'
+    testImplementation unitTestDependencies.kluent
 }
 repositories {
     mavenCentral()

@@ -9,6 +9,6 @@ interface ComicInteractor {
 
     fun getLatestComic() : Single<Comic>
 
-    fun getRandomComic() : Single<Comic>
+    fun getRandomComic(latestComicId: Int) : Single<Comic>
 
 }

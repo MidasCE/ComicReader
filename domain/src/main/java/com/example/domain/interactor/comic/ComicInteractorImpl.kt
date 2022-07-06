@@ -15,9 +15,11 @@ class ComicInteractorImpl(private val comicRepository: ComicRepository) : ComicI
         return comicRepository.getLatestComic()
     }
 
-    override fun getRandomComic(): Single<Comic> {
-        //TODO remove magic number
-        return comicRepository.getComic((0..2641).random())
+    override fun getRandomComic(latestComicId: Int): Single<Comic> {
+        if (latestComicId <= 0) {
+            return comicRepository.getComic(1)
+        }
+        return comicRepository.getComic((1..latestComicId).random())
     }
 
 }

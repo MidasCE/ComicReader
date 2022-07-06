@@ -82,7 +82,7 @@ class ComicScreenViewModel(
 
     fun getRandomComic() {
         loadingLiveData.postValue(true)
-        val disposable = handleComicRequest(comicInteractor.getRandomComic())
+        val disposable = handleComicRequest(comicInteractor.getRandomComic(latestComicId))
 
         compositeDisposable.add(disposable)
     }
