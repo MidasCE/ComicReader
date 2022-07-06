@@ -1,43 +1,36 @@
-package com.example.app.main.product.presenter
+package com.example.app.main.comic.viewmodel
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.MutableLiveData
 import com.example.app.core.SchedulerFactory
-import com.example.app.main.product.ProductScreenView
-import com.example.app.main.product.list.AttributeViewModel
-import com.example.app.main.product.list.CategoryViewModel
-import com.example.app.main.product.list.ImageViewModel
-import com.example.app.main.product.list.ProductViewModel
-import com.example.app.main.product.mapper.ProductViewModelMapper
 import com.example.domain.interactor.comic.ComicInteractor
 import com.nhaarman.mockito_kotlin.*
 import io.reactivex.Single
 import io.reactivex.schedulers.TestScheduler
-import model.Attribute
-import model.Category
-import model.Image
-import model.Product
+import model.Comic
+import org.junit.Assert
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import java.util.concurrent.TimeUnit
 
+
 @RunWith(MockitoJUnitRunner::class)
-class ProductScreenPresenterImplTest {
+class ComicScreenViewModelTest {
+
+    @get:Rule
+    var instantExecutorRule = InstantTaskExecutorRule()
 
     @Mock
     lateinit var schedulerFactory: SchedulerFactory
 
     @Mock
-    lateinit var view: ProductScreenView
+    lateinit var comicInteractor: ComicInteractor
 
-    @Mock
-    lateinit var productInteractor: ComicInteractor
-
-    @Mock
-    lateinit var viewModelMapper: ProductViewModelMapper
-
-    private lateinit var presenter: ProductScreenPresenterImpl
+    private lateinit var viewModel: ComicScreenViewModel
 
     private lateinit var ioScheduler: TestScheduler
 
@@ -51,83 +44,170 @@ class ProductScreenPresenterImplTest {
         whenever(schedulerFactory.io()).thenReturn(ioScheduler)
         whenever(schedulerFactory.main()).thenReturn(mainScheduler)
 
-        presenter = ProductScreenPresenterImpl(
+        viewModel = ComicScreenViewModel(
             schedulerFactory,
-            view,
-            productInteractor,
-            viewModelMapper
+            comicInteractor
         )
+
+        viewModel.mainComicUrlLiveData.observeForever {  }
+        viewModel.comicTitleLiveData.observeForever {  }
+        viewModel.comicDescriptionLiveData.observeForever {  }
+        viewModel.errorLiveData.observeForever {  }
+        viewModel.loadingLiveData.observeForever {  }
     }
 
     @Test
-    fun `Test loadProducts`() {
-        val product = Product(
-            "id",
-            "sku",
+    fun `Test getComic with empty input | should not do anything`() {
+        viewModel.getComic("")
+        verify(comicInteractor, never()).getComic(any())
+    }
+
+    @Test
+    fun `Test getComic with non integer input | should not do anything`() {
+        viewModel.getComic("comic")
+        verify(comicInteractor, never()).getComic(any())
+    }
+
+    @Test
+    fun `Test getComic with integer input | should do the search`() {
+        val comic = Comic(
+            1,
+            "link",
+            "year",
+            "news",
+            "safeTitle",
+            "transcript",
+            "alt",
+            "img",
             "title",
-            "description",
-            "listPrice",
-            isVatable = false,
-            isForSale = false,
-            ageRestricted = false,
-            tags = emptyList(),
-            categories = listOf(Category("categoryId", "category", 1, isDefault = false, recentlyAdded = false)),
-            attributes = listOf(Attribute("attributeID", "title", "unit", "value")),
-            images = mapOf("120" to Image("src", "url", 120), "500" to Image("src", "url", 520))
+            "day"
         )
 
-        val resultViewModel = ProductViewModel(
-            id = product.id,
-            title = product.title,
-            description = product.description,
-            listPrice = product.listPrice,
-            isForSale = product.isForSale,
-            ageRestricted = product.ageRestricted,
-            tags = product.tags,
-            categories = listOf(CategoryViewModel("category", false)),
-            attributes = listOf(AttributeViewModel("title", "unit", "value")),
-            images = listOf(ImageViewModel("src", "url", 120), ImageViewModel("src", "url", 520))
+        whenever(comicInteractor.getComic(1)).thenReturn(
+            Single.just(
+                comic
+            )
         )
 
-        whenever(productInteractor.getProducts(listOf(1000))).thenReturn(
-            Single.just(listOf(product))
-        )
-        whenever(viewModelMapper.map(any())).thenReturn(
-            resultViewModel
-        )
+        viewModel.getComic("1")
 
-        presenter.loadItems()
-        verify(view).showLoading()
+        Assert.assertEquals(viewModel.loadingLiveData.value, true)
 
         ioScheduler.triggerActions()
         mainScheduler.triggerActions()
-        ioScheduler.advanceTimeBy(1, TimeUnit.SECONDS)
-        mainScheduler.advanceTimeBy(1, TimeUnit.SECONDS)
 
-        verify(view).hideLoading()
-        verify(viewModelMapper).map(product)
-        verify(view).showProducts(listOf(resultViewModel))
+        verify(comicInteractor, times(1)).getComic(1)
+        Assert.assertEquals(viewModel.loadingLiveData.value, false)
+
+        val urlResult = viewModel.mainComicUrlLiveData.value
+        Assert.assertEquals(urlResult, "img")
+
+        val titleResult = viewModel.comicTitleLiveData.value
+        Assert.assertEquals(titleResult, "title")
+
+        val descriptionResult = viewModel.comicDescriptionLiveData.value
+        Assert.assertEquals(descriptionResult, "alt")
     }
 
     @Test
-    fun `Test loadProducts with error`() {
+    fun `Test getComic with integer input but got error | should show error`() {
         val throwable = Throwable("error")
-        whenever(productInteractor.getProducts((any()))).thenReturn(
+
+        whenever(comicInteractor.getComic(1)).thenReturn(
             Single.error(
                 throwable
             )
         )
 
-        presenter.loadItems()
-        verify(view).showLoading()
+        viewModel.getComic("1")
+        Assert.assertEquals(viewModel.loadingLiveData.value, true)
 
         ioScheduler.triggerActions()
         mainScheduler.triggerActions()
-        ioScheduler.advanceTimeBy(1, TimeUnit.SECONDS)
-        mainScheduler.advanceTimeBy(1, TimeUnit.SECONDS)
 
-        verify(view).hideLoading()
-        verify(view).showError("error")
-        verify(view, never()).showProducts(any())
+        verify(comicInteractor, times(1)).getComic(1)
+
+        val errorResult = viewModel.errorLiveData.value
+        Assert.assertEquals(errorResult, throwable.toString())
+    }
+
+    @Test
+    fun `Test getLatestComic | should call getLatestComic from interactor`() {
+        val comic = Comic(
+            1,
+            "link",
+            "year",
+            "news",
+            "safeTitle",
+            "transcript",
+            "alt",
+            "img",
+            "title",
+            "day"
+        )
+
+        whenever(comicInteractor.getLatestComic()).thenReturn(
+            Single.just(
+                comic
+            )
+        )
+
+        viewModel.getLatestComic()
+        Assert.assertEquals(viewModel.loadingLiveData.value, true)
+
+        ioScheduler.triggerActions()
+        mainScheduler.triggerActions()
+        Assert.assertEquals(viewModel.loadingLiveData.value, false)
+
+        verify(comicInteractor, times(1)).getLatestComic()
+
+        val urlResult = viewModel.mainComicUrlLiveData.value
+        Assert.assertEquals(urlResult, "img")
+
+        val titleResult = viewModel.comicTitleLiveData.value
+        Assert.assertEquals(titleResult, "title")
+
+        val descriptionResult = viewModel.comicDescriptionLiveData.value
+        Assert.assertEquals(descriptionResult, "alt")
+    }
+
+    @Test
+    fun `Test getRandomComic | should call getRandomComic from interactor`() {
+        val comic = Comic(
+            1,
+            "link",
+            "year",
+            "news",
+            "safeTitle",
+            "transcript",
+            "alt",
+            "img",
+            "title",
+            "day"
+        )
+
+        whenever(comicInteractor.getRandomComic(any())).thenReturn(
+            Single.just(
+                comic
+            )
+        )
+
+        viewModel.getRandomComic()
+        Assert.assertEquals(viewModel.loadingLiveData.value, true)
+
+        ioScheduler.triggerActions()
+        mainScheduler.triggerActions()
+        Assert.assertEquals(viewModel.loadingLiveData.value, false)
+
+        verify(comicInteractor, times(1)).getRandomComic(any())
+
+        val urlResult = viewModel.mainComicUrlLiveData.value
+        Assert.assertEquals(urlResult, "img")
+
+        val titleResult = viewModel.comicTitleLiveData.value
+        Assert.assertEquals(titleResult, "title")
+
+        val descriptionResult = viewModel.comicDescriptionLiveData.value
+        Assert.assertEquals(descriptionResult, "alt")
     }
 }

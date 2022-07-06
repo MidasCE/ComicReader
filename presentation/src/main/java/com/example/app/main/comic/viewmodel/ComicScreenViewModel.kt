@@ -26,7 +26,7 @@ class ComicScreenViewModel(
     val errorLiveData = MutableLiveData<String>()
 
     private var latestComicId: Int = 2641
-    private var mainComicId: Int = -1
+    private var mainComicId: Int = 1
     private var compositeDisposable = CompositeDisposable()
 
     fun getLatestComic() {

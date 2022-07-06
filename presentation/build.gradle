@@ -28,6 +28,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    testOptions {
+        unitTests.returnDefaultValues = true
+
+        unitTests.includeAndroidResources = true
+    }
+    sourceSets {
+        test.java.srcDirs += "src/main/java"
+    }
 
 }
 
@@ -67,12 +75,14 @@ dependencies {
     implementation applicationDependencies.rxJava
     implementation applicationDependencies.rxAndroid
     implementation applicationDependencies.rxKotlin
+    testImplementation unitTestDependencies.coreTesting
     testImplementation unitTestDependencies.kotlin
     testImplementation unitTestDependencies.kotlinTest
     testImplementation unitTestDependencies.robolectric
     testImplementation unitTestDependencies.junit
     testImplementation unitTestDependencies.mockito
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.22.0'
+
     testImplementation unitTestDependencies.kluent
     androidTestImplementation acceptanceTestDependencies.testCore
     androidTestImplementation acceptanceTestDependencies.testRunner
