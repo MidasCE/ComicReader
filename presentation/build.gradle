@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'dagger.hilt.android.plugin'
 
 android {
     compileSdkVersion 29
@@ -58,9 +59,8 @@ dependencies {
     implementation applicationDependencies.core
     implementation applicationDependencies.constraintLayout
     implementation applicationDependencies.recyclerview
-    implementation applicationDependencies.dagger
-    implementation applicationDependencies.daggerSupport
-    kapt applicationDependencies.daggerProcessor
+    implementation applicationDependencies.hilt
+    kapt applicationDependencies.hilt_compiler
     implementation applicationDependencies.parcelerApi
     implementation applicationDependencies.material
     annotationProcessor applicationDependencies.parceler

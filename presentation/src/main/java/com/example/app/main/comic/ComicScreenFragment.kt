@@ -18,7 +18,7 @@ import com.example.app.core.SchedulerFactory
 import com.example.app.main.comic.details.ComicExplanationActivity
 import com.example.app.main.comic.viewmodel.ComicScreenViewModel
 import com.google.android.material.snackbar.Snackbar
-import dagger.android.support.AndroidSupportInjection
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.BackpressureStrategy
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
+@AndroidEntryPoint
 class ComicScreenFragment : Fragment() {
 
     @Inject
@@ -50,7 +51,6 @@ class ComicScreenFragment : Fragment() {
     private val searchInput = _searchInput.toFlowable(BackpressureStrategy.LATEST)
 
     override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
         super.onAttach(context)
     }
 

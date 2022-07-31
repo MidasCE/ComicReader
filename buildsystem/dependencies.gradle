@@ -13,6 +13,7 @@ ext {
     material_version = '1.0.0'
     androidXCore = "1.6.0"
     room_version = "2.3.0"
+    hilt_version = "2.38.1"
 
     //Third party libraries
     dagger_version = '2.24'
@@ -53,6 +54,8 @@ ext {
             dagger                  : "com.google.dagger:dagger:$dagger_version",
             daggerSupport           : "com.google.dagger:dagger-android-support:$dagger_version",
             daggerProcessor         : "com.google.dagger:dagger-android-processor:$dagger_version",
+            hilt                    : "com.google.dagger:hilt-android:$hilt_version",
+            hilt_compiler           : "com.google.dagger:hilt-android-compiler:$hilt_version",
             javaxAnnotation         : "javax.annotation:jsr250-api:$javaxAnnotations_version",
             javaxInject             : "javax.inject:javax.inject:$javaxInject_version",
             retrofit                : "com.squareup.retrofit2:converter-gson:$retrofit_version",

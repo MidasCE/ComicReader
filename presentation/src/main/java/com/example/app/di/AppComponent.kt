@@ -1,36 +1,24 @@
 package com.example.app.di
 
-import android.app.Application
-import com.example.app.App
+import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
-import dagger.android.AndroidInjectionModule
-import dagger.android.support.AndroidSupportInjectionModule
 import javax.inject.Singleton
 
 @Singleton
 @Component(
     modules = [
-        // The android injection modules
-        // enable hiding boiler plate code
-        AndroidInjectionModule::class,
-        AndroidSupportInjectionModule::class,
         ApplicationModule::class,
-        ActivityBindingModule::class,
         DomainModule::class,
         DataModule::class,
-        FragmentBindingModule::class
     ]
 )
 interface AppComponent {
 
-    @Component.Builder
-    interface Builder {
-        @BindsInstance
-        fun application(application: Application): Builder
-
-        fun build(): AppComponent
+    // Factory to create instances of the AppComponent
+    @Component.Factory
+    interface Factory {
+        // With @BindsInstance, the Context passed in will be available in the graph
+        fun create(@BindsInstance context: Context): AppComponent
     }
-
-    fun inject(app: App)
 }

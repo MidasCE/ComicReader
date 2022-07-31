@@ -15,13 +15,9 @@ dependencies {
     def applicationDependencies = rootProject.ext.mainApplication
     def unitTestDependencies = rootProject.ext.unitTesting
 
-    kapt applicationDependencies.daggerCompiler
     compileOnly applicationDependencies.javaxAnnotation
     compileOnly applicationDependencies.javaxInject
 
-    implementation applicationDependencies.dagger
-    implementation applicationDependencies.daggerSupport
-    kapt applicationDependencies.daggerProcessor
     implementation applicationDependencies.rxJava
     implementation applicationDependencies.rxKotlin
 
