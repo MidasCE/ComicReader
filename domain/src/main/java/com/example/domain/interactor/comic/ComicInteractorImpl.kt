@@ -47,7 +47,7 @@ class ComicInteractorImpl(private val comicRepository: ComicRepository) : ComicI
             return comicRepository.getComic(1)
         }
         var randomNum = (1..latestComicId).random()
-        while (randomNum != RESERVED_ID)
+        while (randomNum == RESERVED_ID)
         {
             randomNum = (1..latestComicId).random()
         }
