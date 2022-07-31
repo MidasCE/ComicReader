@@ -12,9 +12,9 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
-import com.example.app.R
 import com.example.app.core.EventObserver
 import com.example.app.core.SchedulerFactory
+import com.example.app.databinding.FragmentComicScreenBinding
 import com.example.app.main.comic.details.ComicExplanationActivity
 import com.example.app.main.comic.viewmodel.ComicScreenViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -35,20 +35,14 @@ class ComicScreenFragment : Fragment() {
     @Inject
     lateinit var schedulerFactory : SchedulerFactory
 
-    private lateinit var loadingView: ProgressBar
-    private lateinit var rootView: View
-    private lateinit var imageView: ImageView
-    private lateinit var searchEditText: EditText
-    private lateinit var titleTextView: TextView
-    private lateinit var altTextView: TextView
-    private lateinit var explainationButton: Button
-    private lateinit var randomButton: Button
-    private lateinit var nextButton: Button
-    private lateinit var previousButton: Button
-
     private val viewDisposable = CompositeDisposable()
     private val _searchInput = BehaviorSubject.create<String>()
     private val searchInput = _searchInput.toFlowable(BackpressureStrategy.LATEST)
+
+    private var _binding: FragmentComicScreenBinding? = null
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -59,19 +53,8 @@ class ComicScreenFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_comic_screen, container, false)
-        rootView = view
-        loadingView = view.findViewById(R.id.progressBar)
-        imageView = view.findViewById(R.id.mainImageView)
-        searchEditText = view.findViewById(R.id.searchEditText)
-        titleTextView = view.findViewById(R.id.titleTextView)
-        altTextView = view.findViewById(R.id.altTextView)
-        explainationButton = view.findViewById(R.id.explanationButton)
-        randomButton = view.findViewById(R.id.randomButton)
-        nextButton = view.findViewById(R.id.nextButton)
-        previousButton = view.findViewById(R.id.previousButton)
-
-        return rootView
+        _binding = FragmentComicScreenBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -87,23 +70,23 @@ class ComicScreenFragment : Fragment() {
             startActivity(i)
         })
 
-        explainationButton.setOnClickListener {
+        binding.explanationButton.setOnClickListener {
             viewModel.onTapExplanation()
         }
 
-        randomButton.setOnClickListener {
+        binding.randomButton.setOnClickListener {
             viewModel.getRandomComic()
         }
 
-        nextButton.setOnClickListener {
+        binding.nextButton.setOnClickListener {
             viewModel.getNextComic()
         }
 
-        previousButton.setOnClickListener {
+        binding.previousButton.setOnClickListener {
             viewModel.getPreviousComic()
         }
 
-        searchEditText.addTextChangedListener(
+        binding.searchEditText.addTextChangedListener(
             object : TextWatcher {
                 override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
                 override fun beforeTextChanged(
@@ -134,34 +117,39 @@ class ComicScreenFragment : Fragment() {
     private val loadingObserver = Observer<Boolean> { visible ->
         // Show hide loading view
         if (visible){
-            loadingView.visibility = View.VISIBLE
+            binding.progressBar.visibility = View.VISIBLE
         } else{
-            loadingView.visibility = View.INVISIBLE
+            binding.progressBar.visibility = View.INVISIBLE
         }
     }
 
     private val mainImageObserver = Observer<String> { url ->
         if (!url.isNullOrEmpty()){
-            Glide.with(this).load(url).into(imageView)
+            Glide.with(this).load(url).into(binding.mainImageView)
         }
     }
 
     private val titleObserver = Observer<String> { title ->
         if (!title.isNullOrEmpty()){
-            titleTextView.text = title
+            binding.titleTextView.text = title
         }
     }
 
     private val descriptionObserver = Observer<String> { description ->
         if (!description.isNullOrEmpty()){
-            altTextView.text = description
+            binding.altTextView.text = description
         }
     }
 
     private val errorObserver = Observer<String> { errorMessage ->
         if (!errorMessage.isNullOrEmpty()){
-            Snackbar.make(rootView, errorMessage, Snackbar.LENGTH_LONG).show()
+            Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_LONG).show()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onDestroy() {
